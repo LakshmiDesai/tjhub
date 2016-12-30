@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "miracl.h"
+#include "mirdef.h"
+
+
+char szN[]="7CF98A4BEEB2B62B1C8363C9677594957398DC44C189E1D1F49B46D38AB9E45DFC58E2AB1D9D1FBF8C52489D994EB0F04F7AFAD09C24A5348B89790FD4AC877AD470BE2227275C6BF071702A1EF7A2785942C2F36C0F460DF5ABA3C2EE86E74712B74E55EE9FC102E4F4666A06BA98405C574A4E09FD1546BE940ED5BB04CDF4ED170F5E6382EC11D89DF300FAEC26C08C4F9E1E9177621980EFD13F540A6627114B07CDD94356EF0F9A4C1298B543E3A0A3E9E74728B3FD1AF4509999290454BA78ABC3DA1E68107E40AF8F1A2A7B0BAB4D695B10E434DFF6B17B5E91B9257FE24BA8C91FDDFE61423B1592C0A0F1505F118168855546E4E58719AB3ADFEA31";
+
+char szD[]="5C38A475FDF1807DF5AF7B2E3F1B4406B8E3BEFF39B62E9E891B203BB02E16B7C8242B37CC458B0D05561EE1B5249D6AE7ABBF73BB154B97A7B44D528244C240C08D65B0BC25CE8C9444915973BA96F8AA1D9AD09817F94109DD9B9D97F892A81EC68796DFDCA1482A7DB3296047C75C0F0816FBD961199737C0F7E57DF940A4FFD8FC05AFEC22BCE992F2A56F4FCCE40523477341B2141D3067E306A2D85EA1F52569CBA028674B8645AE3A9F0FE0F0FD4515B196A7296A2EE532BB333EC217FE70926BFFEA8AB796C16A471F693B5599FCB0E2192BC621C7E175C9E7327343A62F8465CFD8A0E386F581512B5431358735BA057205B21CD2FFCCD07270C195";
+
+
+char szOrgData[]="this is a test";
+void MyTestMiracl_RSA()
+
+{
+	miracl *mip=mirsys(100,0);	// init a big number system?
+	mip->IOBASE=16;             // 16 hex mode
+
+	// MIRACL big type
+	big n,e,d,c,m;
+	c=mirvar(0);	// C - crypted message
+	n=mirvar(0);	// N - mod number 
+	e=mirvar(0);	// E - index
+	d=mirvar(0);	// D - private key
+	m=mirvar(0);	// M - plain message
+
+	bytes_to_big(strlen(szOrgData), szOrgData, m); // convert plain message into big type
+
+	// crypt 
+	cinstr(n, szN);  // init N
+	convert(65537, e);// init E	//cinstr(e, szE);  
+	powmod(m, e, n, c); // compute c = (m ^ e) mod n
+
+	char szBuffer[2048]={0};
+	cotstr(c, szBuffer);                            // write c into szBuffer
+
+	//decrypt
+	cinstr(d, szD );	// init D
+	powmod(c, d, n, m);//m=(c^d)mod n            
+
+	memset( szBuffer,0, 2048 );
+	big_to_bytes(0, m, szBuffer,0);
+	printf(szBuffer);
+	//DbgPrint( szBuffer );
+
+	mirkill(d);
+	mirkill(c);
+	mirkill(n);
+	mirkill(e);
+	mirkill(m);
+	mirexit();
+}
+
+
+
+void main()
+{
+	MyTestMiracl_RSA();
+}
