@@ -1,3 +1,4 @@
+rm miracl.a
 gcc -c -m32 -O2 mrcore.c
 gcc -c -m32 -O2 mrarth0.c
 gcc -c -m32 -O2 mrarth1.c
@@ -48,7 +49,6 @@ gcc -c -m32 -O2 mrpi.c
 gcc -c -m32 -O2 mrflsh2.c
 gcc -c -m32 -O2 mrflsh3.c
 gcc -c -m32 -O2 mrflsh4.c
-cp mrmuldv.gcc mrmuldv.c
 gcc -c -m32 -O2 mrmuldv.c
 ar rc miracl.a mrcore.o mrarth0.o mrarth1.o mrarth2.o mralloc.o mrsmall.o mrzzn2.o mrzzn3.o
 ar r miracl.a mrio1.o mrio2.o mrjack.o mrgcd.o mrxgcd.o mrarth3.o mrbits.o mrecn2.o mrzzn4.o
